@@ -1,0 +1,80 @@
+{
+  "transport_system": {
+    "transports": [
+      {
+        "id": 1,
+        "type": "bus",
+        "name": "Автобус №79",
+        "capacity": 2,
+        "bus_number": "А79",
+        "line_number": null,
+        "carriages": null,
+        "route_id": 1,
+        "passengers": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": 2,
+        "type": "tram",
+        "name": "Трамвай №1",
+        "capacity": 90,
+        "bus_number": null,
+        "line_number": "1",
+        "carriages": null,
+        "route_id": 2,
+        "passengers": [
+          3
+        ]
+      },
+      {
+        "id": 3,
+        "type": "train",
+        "name": "Электричка",
+        "capacity": 500,
+        "bus_number": null,
+        "line_number": null,
+        "carriages": 5,
+        "route_id": null,
+        "passengers": [
+          4
+        ]
+      }
+    ],
+    "passengers": [
+      {
+        "id": 1,
+        "name": "Сергей Иванов",
+        "ticket_number": "M001"
+      },
+      {
+        "id": 2,
+        "name": "Мария Васильева",
+        "ticket_number": "M002"
+      },
+      {
+        "id": 3,
+        "name": "Ольга Петрова",
+        "ticket_number": "M003"
+      },
+      {
+        "id": 4,
+        "name": "Любовь Иванова",
+        "ticket_number": "M004"
+      }
+    ],
+    "routes": [
+      {
+        "id": 1,
+        "start_point": "Метро",
+        "end_point": "Общежитие"
+      },
+      {
+        "id": 2,
+        "start_point": "Университет",
+        "end_point": "Театр"
+      }
+    ]
+  }
+}
