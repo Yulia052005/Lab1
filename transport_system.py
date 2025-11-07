@@ -2,55 +2,14 @@ import json
 import xml.etree.ElementTree as ET
 
 
-class TransportError(Exception):
-    """Базовое исключение для транспортной системы"""
-    pass
-
-
-class CapacityExceededError(TransportError):
-    """Превышена вместимость транспорта"""
-    pass
-
-
-class PassengerNotFoundError(TransportError):
-    """Пассажир не найден"""
-    pass
-
-
-class InvalidDataError(TransportError):
-    """Неверные данные"""
-    pass
-
-
-class FileOperationError(TransportError):
-    """Ошибка работы с файлом"""
-    pass
-
-
-class DuplicateIdError(TransportError):
-    """Объект с таким ID уже существует в системе"""
-    pass
-
-
-class EmptySystemError(TransportError):
-    """Операция невозможна - система пуста"""
-    pass
-
-
-class RouteConflictError(TransportError):
-    """Конфликт маршрутов - транспорт уже назначен на другой маршрут"""
-    pass
-
-
 class Transport:
     def __init__(self, transport_id, name, capacity):
-        # Проверка входных данных
         if capacity <= 0:
             raise InvalidDataError("Вместимость должна быть больше нуля")
         if not name:
             raise InvalidDataError("Название транспорта не может быть пустым")
         if transport_id <= 0:
-            raise InvalidDataError("ID транспорта должен быть юольше нуля")
+            raise InvalidDataError("ID транспорта должен быть больше нуля")
 
         self.id = transport_id
         self.name = name
@@ -65,18 +24,18 @@ class Transport:
 
             if len(self.passengers) >= self.capacity:
                 raise CapacityExceededError(
-                    f"Нет свободных мест в {self.name}! Вместимость: {self.capacity}"
+                    f"В транспорте {self.name} нет мест! Максимум: {self.capacity}"
                 )
 
             self.passengers.append(passenger)
-            print(f"Пассажир {passenger.name} добавлен в {self.name}")
+            print(f"Успешно добавлен {passenger.name} в {self.name}")
             return True
 
         except CapacityExceededError as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
             return False
         except InvalidDataError as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
             return False
 
     def remove_passenger(self, passenger):
@@ -86,18 +45,18 @@ class Transport:
 
             if passenger in self.passengers:
                 self.passengers.remove(passenger)
-                print(f"Пассажир {passenger.name} удален из {self.name}")
+                print(f"Удален {passenger.name} из {self.name}")
                 return True
             else:
                 raise PassengerNotFoundError(
-                    f"Пассажир {passenger.name} не найден в {self.name}"
+                    f"Не найден {passenger.name} в {self.name}"
                 )
 
         except (PassengerNotFoundError, InvalidDataError) as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
             return False
         except Exception as e:
-            print(f"Неожиданная ошибка: {e}")
+            print(f"Неизвестная проблема: {e}")
             return False
 
     def __str__(self):
@@ -183,27 +142,27 @@ class TransportSystem:
             if transport is None:
                 raise InvalidDataError("Транспорт не может быть пустым")
             self.transports.append(transport)
-            print(f"Добавлен транспорт: {transport}")
+            print(f"Зарегистрирован транспорт: {transport}")
         except InvalidDataError as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
 
     def add_passenger(self, passenger):
         try:
             if passenger is None:
                 raise InvalidDataError("Пассажир не может быть пустым")
             self.passengers.append(passenger)
-            print(f"Добавлен пассажир: {passenger}")
+            print(f"Зарегистрирован пассажир: {passenger}")
         except InvalidDataError as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
 
     def add_route(self, route):
         try:
             if route is None:
                 raise InvalidDataError("Маршрут не может быть пустым")
             self.routes.append(route)
-            print(f"Добавлен маршрут: {route}")
+            print(f"Создан маршрут: {route}")
         except InvalidDataError as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
 
     def assign_route_to_transport(self, transport_id, route_id):
         try:
@@ -211,15 +170,15 @@ class TransportSystem:
             route = self.find_route(route_id)
 
             if transport is None:
-                raise PassengerNotFoundError(f"Транспорт с ID {transport_id} не найден")
+                raise PassengerNotFoundError(f"Не существует транспорта с ID {transport_id}")
             if route is None:
-                raise PassengerNotFoundError(f"Маршрут с ID {route_id} не найден")
+                raise PassengerNotFoundError(f"Не существует маршрута с ID {route_id}")
 
             transport.route = route
-            print(f"Маршрут {route} назначен транспорту {transport.name}")
+            print(f"Назначен {route} для {transport.name}")
 
         except PassengerNotFoundError as e:
-            print(f"Ошибка: {e}")
+            print(f"Проблема: {e}")
 
     def find_transport(self, transport_id):
         for transport in self.transports:
@@ -240,47 +199,45 @@ class TransportSystem:
         return None
 
     def show_system_info(self):
-        """Показывает всю информацию о системе на экране"""
-        print("\n" + "=" * 50)
-        print(" ИНФОРМАЦИЯ О ТРАНСПОРТНОЙ СИСТЕМЕ")
-        print("=" * 50)
+        """Отображение текущего состояния системы"""
+        print("\n" + "=" * 60)
+        print(" СВОДКА ПО ТРАНСПОРТНОЙ СИСТЕМЕ")
+        print("=" * 60)
 
-        print(f"\nОБЩАЯ СТАТИСТИКА:")
-        print(f" Транспортных средств: {len(self.transports)}")
-        print(f" Пассажиров: {len(self.passengers)}")
-        print(f" Маршрутов: {len(self.routes)}")
+        print(f"\nОСНОВНЫЕ ПОКАЗАТЕЛИ:")
+        print(f" Единиц транспорта: {len(self.transports)}")
+        print(f" Зарегистрировано пассажиров: {len(self.passengers)}")
+        print(f" Активных маршрутов: {len(self.routes)}")
 
-        print(f"\nМАРШРУТЫ:")
+        print(f"\nСПИСОК МАРШРУТОВ:")
         for route in self.routes:
             print(f" {route}")
 
-        print(f"\nТРАНСПОРТ:")
+        print(f"\nТРАНСПОРТНЫЕ СРЕДСТВА:")
         for transport in self.transports:
-            route_info = f" на маршруте {transport.route}" if transport.route else " (без маршрута)"
-            passengers_info = f", пассажиров: {len(transport.passengers)}"
-            print(f" {transport}{route_info}{passengers_info}")
+            route_status = f" на маршруте {transport.route}" if transport.route else " (маршрут не назначен)"
+            passenger_count = f", пассажиров: {len(transport.passengers)}"
+            print(f" {transport}{route_status}{passenger_count}")
 
-            # Показываем пассажиров в каждом транспорте
             if transport.passengers:
                 for passenger in transport.passengers:
                     print(f"   - {passenger.name}")
 
-        print(f"\nПАССАЖИРЫ:")
+        print(f"\nСПИСОК ПАССАЖИРОВ:")
         for passenger in self.passengers:
-            # Находим в каком транспорте пассажир
-            in_transport = None
+            current_transport = None
             for transport in self.transports:
                 if passenger in transport.passengers:
-                    in_transport = transport.name
+                    current_transport = transport.name
                     break
-            transport_info = f" в {in_transport}" if in_transport else " (ждет транспорта)"
-            print(f" {passenger.name}{transport_info}")
+            location_info = f" находится в {current_transport}" if current_transport else " (ожидает транспорт)"
+            print(f" {passenger.name}{location_info}")
 
     def save_to_json(self, filename):
-        """Сохранение в JSON по разработанной структуре"""
+        """Запись данных в JSON формат"""
         try:
             if not filename:
-                raise InvalidDataError("Имя файла не может быть пустым")
+                raise InvalidDataError("Не указано имя файла")
 
             data = {
                 "transport_system": {
@@ -319,31 +276,29 @@ class TransportSystem:
 
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-            print(f"Данные сохранены в JSON: {filename}")
+            print(f"Данные записаны в JSON файл: {filename}")
 
         except InvalidDataError as e:
-            print(f"Ошибка данных: {e}")
+            print(f"Ошибка в данных: {e}")
         except IOError as e:
-            print(f"Ошибка ввода-вывода: {e}")
+            print(f"Проблема с файлом: {e}")
         except Exception as e:
-            print(f"Неожиданная ошибка при сохранении JSON: {e}")
+            print(f"Неизвестная проблема при записи JSON: {e}")
 
     def load_from_json(self, filename):
-        """Чтение из JSON файла по разработанной структуре"""
+        """Чтение данных из JSON файла"""
         try:
             if not filename:
-                raise InvalidDataError("Имя файла не может быть пустым")
+                raise InvalidDataError("Не указано имя файла")
 
             with open(filename, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            print(f"Чтение данных из JSON: {filename}")
+            print(f"Чтение данных из JSON файла: {filename}")
 
-            # Очищаем текущие данные
             self.transports.clear()
             self.passengers.clear()
             self.routes.clear()
 
-            # Загружаем маршруты
             for route_data in data["transport_system"]["routes"]:
                 route = Route(
                     route_data["id"],
@@ -353,7 +308,6 @@ class TransportSystem:
                 self.routes.append(route)
                 print(f" Загружен маршрут: {route}")
 
-            # Загружаем пассажиров
             for passenger_data in data["transport_system"]["passengers"]:
                 passenger = Passenger(
                     passenger_data["id"],
@@ -363,7 +317,6 @@ class TransportSystem:
                 self.passengers.append(passenger)
                 print(f" Загружен пассажир: {passenger}")
 
-            # Загружаем транспорт
             for transport_data in data["transport_system"]["transports"]:
                 transport_type = transport_data["type"]
 
@@ -395,13 +348,11 @@ class TransportSystem:
                         transport_data["capacity"]
                     )
 
-                # Восстанавливаем связь с маршрутом
                 if transport_data["route_id"]:
                     route = self.find_route(transport_data["route_id"])
                     if route:
                         transport.route = route
 
-                # Восстанавливаем связь с пассажирами
                 for passenger_id in transport_data["passengers"]:
                     passenger = self.find_passenger(passenger_id)
                     if passenger:
@@ -413,23 +364,22 @@ class TransportSystem:
             print("Все данные успешно загружены из JSON!")
 
         except FileNotFoundError:
-            print(f"Файл {filename} не найден")
+            print(f"Файл {filename} не обнаружен")
         except json.JSONDecodeError:
-            print(f"Ошибка формата JSON в файле {filename}")
+            print(f"Некорректный JSON в файле {filename}")
         except InvalidDataError as e:
-            print(f"Ошибка данных: {e}")
+            print(f"Ошибка в данных: {e}")
         except Exception as e:
-            print(f"Неожиданная ошибка при загрузке JSON: {e}")
+            print(f"Неизвестная проблема при чтении JSON: {e}")
 
     def save_to_xml(self, filename):
-        """Сохранение в XML по разработанной структуре"""
+        """Запись данных в XML формат"""
         try:
             if not filename:
-                raise InvalidDataError("Имя файла не может быть пустым")
+                raise InvalidDataError("Не указано имя файла")
 
             root = ET.Element("transport_system")
 
-            # Транспорт
             transports_elem = ET.SubElement(root, "transports")
             for transport in self.transports:
                 transport_elem = ET.SubElement(transports_elem, "transport")
@@ -451,7 +401,6 @@ class TransportSystem:
                 for passenger in transport.passengers:
                     ET.SubElement(passengers_elem, "passenger_id").text = str(passenger.id)
 
-            # Пассажиры
             passengers_elem = ET.SubElement(root, "passengers")
             for passenger in self.passengers:
                 passenger_elem = ET.SubElement(passengers_elem, "passenger")
@@ -459,7 +408,6 @@ class TransportSystem:
                 ET.SubElement(passenger_elem, "name").text = passenger.name
                 ET.SubElement(passenger_elem, "ticket_number").text = passenger.ticket_number
 
-            # Маршруты
             routes_elem = ET.SubElement(root, "routes")
             for route in self.routes:
                 route_elem = ET.SubElement(routes_elem, "route")
@@ -469,31 +417,29 @@ class TransportSystem:
 
             tree = ET.ElementTree(root)
             tree.write(filename, encoding='utf-8', xml_declaration=True)
-            print(f"Данные сохранены в XML: {filename}")
+            print(f"Данные записаны в XML файл: {filename}")
 
         except InvalidDataError as e:
-            print(f"Ошибка данных: {e}")
+            print(f"Ошибка в данных: {e}")
         except IOError as e:
-            print(f"Ошибка ввода-вывода: {e}")
+            print(f"Проблема с файлом: {e}")
         except Exception as e:
-            print(f"Неожиданная ошибка при сохранении XML: {e}")
+            print(f"Неизвестная проблема при записи XML: {e}")
 
     def load_from_xml(self, filename):
-        """Чтение из XML файла по разработанной структуре"""
+        """Чтение данных из XML файла"""
         try:
             if not filename:
-                raise InvalidDataError("Имя файла не может быть пустым")
+                raise InvalidDataError("Не указано имя файла")
 
             tree = ET.parse(filename)
             root = tree.getroot()
-            print(f"Чтение данных из XML: {filename}")
+            print(f"Чтение данных из XML файла: {filename}")
 
-            # Очищаем текущие данные
             self.transports.clear()
             self.passengers.clear()
             self.routes.clear()
 
-            # Загружаем маршруты
             for route_elem in root.find("routes"):
                 route = Route(
                     int(route_elem.find("id").text),
@@ -503,7 +449,6 @@ class TransportSystem:
                 self.routes.append(route)
                 print(f" Загружен маршрут: {route}")
 
-            # Загружаем пассажиров
             for passenger_elem in root.find("passengers"):
                 passenger = Passenger(
                     int(passenger_elem.find("id").text),
@@ -513,7 +458,6 @@ class TransportSystem:
                 self.passengers.append(passenger)
                 print(f" Загружен пассажир: {passenger}")
 
-            # Загружаем транспорт
             for transport_elem in root.find("transports"):
                 transport_type = transport_elem.find("type").text
                 transport_id = int(transport_elem.find("id").text)
@@ -532,14 +476,12 @@ class TransportSystem:
                 else:
                     transport = Transport(transport_id, name, capacity)
 
-                # Восстанавливаем связь с маршрутом
                 route_id_elem = transport_elem.find("route_id")
                 if route_id_elem is not None and route_id_elem.text:
                     route = self.find_route(int(route_id_elem.text))
                     if route:
                         transport.route = route
 
-                # Восстанавливаем связь с пассажирами
                 passengers_elem = transport_elem.find("passengers")
                 if passengers_elem is not None:
                     for passenger_id_elem in passengers_elem.findall("passenger_id"):
@@ -553,40 +495,83 @@ class TransportSystem:
             print("Все данные успешно загружены из XML!")
 
         except FileNotFoundError:
-            print(f"Файл {filename} не найден")
+            print(f"Файл {filename} не обнаружен")
         except ET.ParseError:
-            print(f"Ошибка формата XML в файле {filename}")
+            print(f"Некорректный XML в файле {filename}")
         except InvalidDataError as e:
-            print(f"Ошибка данных: {e}")
+            print(f"Ошибка в данных: {e}")
         except Exception as e:
-            print(f"Неожиданная ошибка при загрузке XML: {e}")
+            print(f"Неизвестная проблема при чтении XML: {e}")
+
+
+# Классы для обработки исключительных ситуаций
+class TransportError(Exception):
+    """Основной класс для ошибок транспортной системы"""
+    pass
+
+
+class CapacityExceededError(TransportError):
+    """Превышено количество мест в транспорте"""
+    pass
+
+
+class PassengerNotFoundError(TransportError):
+    """Отсутствует указанный пассажир"""
+    pass
+
+
+class InvalidDataError(TransportError):
+    """Обнаружены некорректные данные"""
+    pass
+
+
+class FileOperationError(TransportError):
+    """Проблемы при работе с файлами"""
+    pass
+
+
+class DuplicateIdError(TransportError):
+    """Повторяющийся идентификатор объекта"""
+    pass
+
+
+class EmptySystemError(TransportError):
+    """Отсутствуют данные в системе"""
+    pass
+
+
+class RouteConflictError(TransportError):
+    """Невозможно назначить маршрут"""
+    pass
 
 
 def main():
-    print("ЗАПУСК ТРАНСПОРТНОЙ СИСТЕМЫ")
-    print("=" * 40)
+    print("ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ ТРАНСПОРТА")
+    print("=" * 45)
 
     system = TransportSystem()
 
-    # Создаем тестовые данные
-    print("\nСОЗДАЕМ ТЕСТОВЫЕ ДАННЫЕ:")
+    print("\nФОРМИРОВАНИЕ ТЕСТОВЫХ ДАННЫХ:")
 
     try:
-        route1 = Route(1, "Метро", "Общежитие")
-        route2 = Route(2, "Университет", "Театр")
+        route1 = Route(1, "Центральный вокзал", "Аэропорт")
+        route2 = Route(2, "Студенческий городок", "Торговый центр")
+        route3 = Route(3, "Город", "Деревня")
 
-        bus = Bus(1, "Автобус №79", 2, "А79")  # Маленькая вместимость для демонстрации ошибок
+        bus = Bus(1, "Городской автобус М79", 2, "M79")
         bus.route = route1
 
-        tram = Tram(2, "Трамвай №1", 90, "1")
+        tram = Tram(2, "Трамвай Т5", 90, "T5")
         tram.route = route2
 
-        train = Train(3, "Электричка", 500, 5)
+        train = Train(3, "Пригородный поезд", 500, 6)
+        train.route = route3
 
-        passenger1 = Passenger(1, "Сергей Иванов", "M001")
-        passenger2 = Passenger(2, "Мария Васильева", "M002")
-        passenger3 = Passenger(3, "Ольга Петрова", "M003")
-        passenger4 = Passenger(4, "Любовь Иванова", "M004")
+        passenger1 = Passenger(1, "Алексей Семенов", "B001")
+        passenger2 = Passenger(2, "Ирина Ковалева", "B002")
+        passenger3 = Passenger(3, "Михаил Орлов", "B003")
+        passenger4 = Passenger(4, "Светлана Васнецова", "B004")
+        passenger5 = Passenger(5, "Егор Моисеев", "B005")
 
         system.add_transport(bus)
         system.add_transport(tram)
@@ -595,60 +580,49 @@ def main():
         system.add_passenger(passenger2)
         system.add_passenger(passenger3)
         system.add_passenger(passenger4)
+        system.add_passenger(passenger5)
         system.add_route(route1)
         system.add_route(route2)
+        system.add_route(route3)
 
-        # Демонстрация работы с исключениями
-        print("\nДЕМОНСТРАЦИЯ ОБРАБОТКИ ОШИБОК:")
+        print("\nТЕСТИРОВАНИЕ ФУНКЦИОНАЛА:")
 
-        # Попытка добавить пассажира в переполненный автобус
-        print("\n1. Попытка переполнить автобус:")
+        print("\n1. Проверка ограничения по вместимости:")
         bus.add_passenger(passenger1)
         bus.add_passenger(passenger2)
-        bus.add_passenger(passenger3)  # Должна быть ошибка!
+        bus.add_passenger(passenger3)
 
-        # Попытка удалить несуществующего пассажира
-        print("\n2. Попытка удалить несуществующего пассажира:")
+        print("\n2. Попытка удалить отсутствующего пассажира:")
         bus.remove_passenger(passenger4)
 
-        # Сажаем пассажиров в транспорт
-        print("\n3. Корректная посадка пассажиров:")
+        print("\n3. Стандартная процедура посадки:")
         bus.add_passenger(passenger1)
         bus.add_passenger(passenger2)
         tram.add_passenger(passenger3)
         train.add_passenger(passenger4)
+        train.add_passenger(passenger5)
 
-        # Показываем созданные данные
         system.show_system_info()
 
-        # Сохраняем в оба формата (создаем файлы)
-        print("\nСОХРАНЕНИЕ ДАННЫХ:")
-        system.save_to_json("transport_data.json")
-        system.save_to_xml("transport_data.xml")
+        print("\nСОХРАНЕНИЕ ИНФОРМАЦИИ:")
+        system.save_to_json("system_data.json")
+        system.save_to_xml("system_data.xml")
 
-        # Демонстрируем чтение (теперь файлы существуют!)
-        print("\nДЕМОНСТРАЦИЯ ЧТЕНИЯ:")
+        print("\nПРОВЕРКА ЧТЕНИЯ ДАННЫХ:")
 
-        # Создаем новую пустую систему
         new_system = TransportSystem()
-
-        # Читаем из JSON (файл уже создан выше)
-        print("\n--- Чтение из JSON ---")
-        new_system.load_from_json("transport_data.json")
+        print("\n--- Загрузка из JSON ---")
+        new_system.load_from_json("system_data.json")
         new_system.show_system_info()
 
-        # Создаем еще одну пустую систему
         another_system = TransportSystem()
-
-        # Читаем из XML (файл уже создан выше)
-        print("\n--- Чтение из XML ---")
-        another_system.load_from_xml("transport_data.xml")
+        print("\n--- Загрузка из XML ---")
+        another_system.load_from_xml("system_data.xml")
         another_system.show_system_info()
 
     except Exception as e:
-        print(f"Критическая ошибка в основном потоке: {e}")
+        print(f"Критический сбой: {e}")
 
 
 if __name__ == "__main__":
     main()
-
