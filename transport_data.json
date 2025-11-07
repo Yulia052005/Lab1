@@ -4,9 +4,9 @@
       {
         "id": 1,
         "type": "bus",
-        "name": "Автобус №79",
+        "name": "Городской автобус М79",
         "capacity": 2,
-        "bus_number": "А79",
+        "bus_number": "M79",
         "line_number": null,
         "carriages": null,
         "route_id": 1,
@@ -18,10 +18,10 @@
       {
         "id": 2,
         "type": "tram",
-        "name": "Трамвай №1",
+        "name": "Трамвай Т5",
         "capacity": 90,
         "bus_number": null,
-        "line_number": "1",
+        "line_number": "T5",
         "carriages": null,
         "route_id": 2,
         "passengers": [
@@ -31,49 +31,60 @@
       {
         "id": 3,
         "type": "train",
-        "name": "Электричка",
+        "name": "Пригородный поезд",
         "capacity": 500,
         "bus_number": null,
         "line_number": null,
-        "carriages": 5,
-        "route_id": null,
+        "carriages": 6,
+        "route_id": 3,
         "passengers": [
-          4
+          4,
+          5
         ]
       }
     ],
     "passengers": [
       {
         "id": 1,
-        "name": "Сергей Иванов",
-        "ticket_number": "M001"
+        "name": "Алексей Семенов",
+        "ticket_number": "B001"
       },
       {
         "id": 2,
-        "name": "Мария Васильева",
-        "ticket_number": "M002"
+        "name": "Ирина Ковалева",
+        "ticket_number": "B002"
       },
       {
         "id": 3,
-        "name": "Ольга Петрова",
-        "ticket_number": "M003"
+        "name": "Михаил Орлов",
+        "ticket_number": "B003"
       },
       {
         "id": 4,
-        "name": "Любовь Иванова",
-        "ticket_number": "M004"
+        "name": "Светлана Васнецова",
+        "ticket_number": "B004"
+      },
+      {
+        "id": 5,
+        "name": "Егор Моисеев",
+        "ticket_number": "B005"
       }
     ],
     "routes": [
       {
         "id": 1,
-        "start_point": "Метро",
-        "end_point": "Общежитие"
+        "start_point": "Центральный вокзал",
+        "end_point": "Аэропорт"
       },
       {
         "id": 2,
-        "start_point": "Университет",
-        "end_point": "Театр"
+        "start_point": "Студенческий городок",
+        "end_point": "Торговый центр"
+      },
+      {
+        "id": 3,
+        "start_point": "Город",
+        "end_point": "Деревня"
       }
     ]
   }
